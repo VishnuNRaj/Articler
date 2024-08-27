@@ -9,7 +9,7 @@ interface ColorModeProviderProps {
     children: ReactNode;
 }
 
-const ColorModeContext = createContext<ColorModeContextType>({ toggleColorMode: () => { } });
+const ColorModeContext = createContext<ColorModeContextType>({ toggleColorMode: () => {} });
 
 const getDesignTokens = (mode: 'light' | 'dark') => ({
     palette: {
@@ -22,12 +22,13 @@ const getDesignTokens = (mode: 'light' | 'dark') => ({
                 secondary: {
                     main: '#dc004e',
                 },
-                selectedChat: {
-                    main: '#e6eaeb',
-                },
                 background: {
-                    default: '#121212',
-                    paper: '#333',
+                    default: '#f0f0f0',
+                    paper: '#ffffff',
+                },
+                text: {
+                    primary: '#000000',
+                    secondary: '#555555',
                 },
             }
             : {
@@ -39,14 +40,11 @@ const getDesignTokens = (mode: 'light' | 'dark') => ({
                 },
                 background: {
                     default: '#121212',
-                    paper: '#333',
+                    paper: '#333333',
                 },
                 text: {
                     primary: '#ffffff',
                     secondary: 'rgba(255, 255, 255, 0.7)',
-                },
-                selectedChat: {
-                    main: '#393939',
                 },
             }),
     },

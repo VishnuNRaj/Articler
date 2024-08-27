@@ -1,9 +1,9 @@
-"use client"
-
 import LoginComponent from "@/components/Login/LoginComponent";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 
-const Login: React.FC = () => {
+export default async function Page() {
+    const session = await getServerSession()
+    if(session) redirect("/")
     return <LoginComponent />
 }
-
-export default Login;

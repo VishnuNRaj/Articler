@@ -1,11 +1,8 @@
-import { FC } from "react";
+import RegisterComponent from "@/components/Register/RegisterComponent";
+import { getServerSession } from "next-auth";
 
-const Register:FC = () => {
-    return (
-        <div className="w-full bg-green-500 h-screen flex items-center justify-center">
-            <h1 className="font-semibold text-white">Hellooo</h1>
-        </div>
-    )
+export default async function Page() {
+    const session = await getServerSession()
+    console.log(session)
+    return <RegisterComponent />
 }
-
-export default Register
