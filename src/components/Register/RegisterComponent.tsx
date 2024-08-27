@@ -10,7 +10,7 @@ export default function RegisterComponent() {
     const redirect = useRedirect()
     const { loading } = useLoading()
     return (
-        <div className="flex min-h-screen items-center justify-center p-10 bg-auto text-gray-900">
+        <div className="flex min-h-screen items-center justify-center md:p-10 p-5 bg-auto text-gray-900">
             <div className="w-full animate-popover-show max-w-md border-separate border-background border-2 text-gray-900 rounded-lg shadow-lg p-8">
                 <h2 className="text-2xl font-bold text-center mb-2">
                     Register
@@ -121,7 +121,7 @@ export default function RegisterComponent() {
                     </div>
                     <button
                         type="submit"
-                        className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                        className="w-full px-4 py-2 bg-foreground text-background rounded-lg"
                     >
                         {loading ? <Preloader /> : "Register"}
                     </button>
