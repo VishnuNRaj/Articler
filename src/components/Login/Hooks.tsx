@@ -16,18 +16,22 @@ export default function useLogin() {
         setCallbackUrl(callback);
       }, []);
     const handleSubmit = async (values: LoginInterface) => {
+        const id = toast.loading("Loading",{
+            dismissible:true
+        })
         try {
-            const id = toast.loading("Loading",{
-                dismissible:true
-            })
             const result = await signIn('credentials', {
                 redirect: true,
                 email: values.email,
                 password: values.password,
-                callbackUrl:""
+                callbackUrl:callbackUrl
             });
+            console.log(result,"????")
             if (result?.error) {
                 console.error(result.error);
+                toast.error("No user found or incorrect password",{
+                    id
+                })
             } else {
                 console.log("Successfully logged in", result);
                 toast.success("Login Success",{
@@ -35,7 +39,9 @@ export default function useLogin() {
                 })
             }
         } catch (error) {
-
+            toast.error("Internal Server Error",{
+                id
+            })
         }
     }
     const formik = useFormik({

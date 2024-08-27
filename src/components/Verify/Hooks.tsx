@@ -3,13 +3,20 @@
 import useRedirect from '@/hooks/useRedirect';
 import { verifyUser } from '@/request/auth';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import useLogin from '../Login/Hooks';
 import { toast } from 'sonner';
 import { signIn } from 'next-auth/react';
+import useLoading from '@/hooks/useLoading';
 
 export default function useVerify() {
     const { verification_link } = useParams()
+    const [verify,setVerify] = useState({
+        message:"Verifying Please Wait",
+        verified:false,
+        complete:false,
+    })
+    const {loading,setLoading} = useLoading()
     const redirect = useRedirect()
     const handleSubmit = async () => {
         const id = toast.loading("Loading", {
@@ -17,25 +24,42 @@ export default function useVerify() {
         })
         try {
             const response = await verifyUser(verification_link as string)
+            console.log(response)
             if (response.status === 200) {
                 toast.success("Verified Successfully",{
                     id
                 })
-                return redirect({ path: "/" })
-            } else return toast.error(response.message,{
-                id
-            });
+                setVerify({
+                    message:"Account Verified Successfully",
+                    verified:true,
+                    complete:true,
+                })
+            } else {
+                toast.error(response.error,{
+                    id,
+                });
+                setVerify({
+                    message:response.error,
+                    verified:false,
+                    complete:true
+                })
+            }
         } catch (e) {
             console.log(e)
-        }
+            setVerify({
+                message:"Internal Server Error",
+                verified:false,
+                complete:true,
+            })
+            return toast.error("",{
+                id
+            })
+        } 
+        setLoading(false)
     }
     useEffect(() => {
-        const { searchParams } = new URL(window.location.href);
-        const verificationLink = searchParams.get('verification_link');
-
-        alert(verification_link);
         handleSubmit()
-    }, [verification_link]);
+    }, []);
 
-    return null;
+    return {verify,loading};
 }

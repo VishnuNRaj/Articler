@@ -32,7 +32,7 @@ const generateEmailTemplate = async (verificationLink: string, email: string): P
                     font-family: Arial, sans-serif;
                 }
                 .verification-button {
-                    background-color: blue;
+                    background-color: black;
                     color: white;
                     padding: 10px 20px;
                     border: none;

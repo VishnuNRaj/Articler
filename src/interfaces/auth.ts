@@ -23,6 +23,7 @@ export interface LoginInterface {
 
 export interface RegitserResponse extends Responses {
     user:Users;
+    error:string;
 }
 
 
