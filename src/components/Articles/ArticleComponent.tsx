@@ -17,7 +17,9 @@ export default function ArticleComponent() {
     }
     return (
         <div className="w-full p-2">
-            <MyArticles articles={articles} />
+            {articles && articles.length > 0 && (
+                <MyArticles articles={articles} />
+            )}
         </div>
     )
 }

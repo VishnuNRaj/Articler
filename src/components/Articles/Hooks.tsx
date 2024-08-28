@@ -10,7 +10,6 @@ export default function useArticles() {
     async function getArticleData() {
         try {
             const response = await getArticleDatas({ skip, search: "" })
-            console.log(response)
             setArticles(response.articles)
             setCount(response.count)
         } catch (e) {
