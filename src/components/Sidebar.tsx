@@ -83,7 +83,7 @@ export function SidebarDemo({ children }: SidebarDemoProps) {
     return (
         <div
             className={cn(
-                "rounded-md flex flex-col md:flex-row bg-secondary dark:bg-muted w-full flex-1 max-w-7xl mx-auto border border-neutral-200 dark:border-neutral-700 overflow-hidden",
+                "rounded-md flex flex-col md:flex-row bg-secondary dark:bg-muted w-full flex-1 m-0 border border-neutral-200 dark:border-neutral-700 overflow-hidden",
                 "h-screen"
             )}
         >
