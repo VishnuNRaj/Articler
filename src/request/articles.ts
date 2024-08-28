@@ -22,3 +22,14 @@ export async function getArticleDatas(data:getArticles):Promise<{count:number;ar
         return error.response.data
     }
 }
+
+export async function getArticle(link:string):Promise<{article:Article}> {
+    try {
+        const response = await axiosInstance.get(`/articles/get-article?link=${link}`);
+        console.log('Data: ', response.data);
+        return response.data
+    } catch (error:any) {
+        console.error('Registration error:', error);
+        return error.response.data
+    }
+}

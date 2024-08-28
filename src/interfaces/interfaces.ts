@@ -1,5 +1,5 @@
 export interface Redirects {
-    path: "/login" | "/register" | "/" | "/profile" | "/settings" | "/articles" | "/add-article";
+    path: "/login" | "/register" | "/" | "/profile" | "/settings" | "/articles" | "/add-article" | `/articles/${string}`;
 }
 
 export interface Responses {

@@ -2,11 +2,9 @@
 
 import useRedirect from '@/hooks/useRedirect';
 import { verifyUser } from '@/request/auth';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import useLogin from '../Login/Hooks';
 import { toast } from 'sonner';
-import { signIn } from 'next-auth/react';
 import useLoading from '@/hooks/useLoading';
 
 export default function useVerify() {

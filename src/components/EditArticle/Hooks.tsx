@@ -1,62 +1,82 @@
-import { useState } from "react";
-import { Add_Article, Article, Content } from "@/interfaces/articles";
-import useRedirect from "@/hooks/useRedirect";
-import useLoading from "@/hooks/useLoading";
-import axiosInstance from "@/config/axios";
+import { useState, useRef, ChangeEvent } from "react";
+import { Article, Content } from "@/interfaces/articles";
 import { toast } from "sonner";
+import axiosInstance from "@/config/axios";
 import { uploadFile } from "@/utils/FilesUpload";
+import { redirect } from "next/dist/server/api-utils";
+import useRedirect from "@/hooks/useRedirect";
 
-function useArticleForm() {
+const useArticleForm = (complete:(article:Article)=>void) => {
     const [article, setArticle] = useState<Article>({
         id: "",
         title: "",
-        content: [],
+        description: "",
+        thumbnail: null,
         published: false,
-        createdAt: new Date(),
-        content_type:"",
-        description:"",
-        link:"",
-        thumbnail:"",
+        content: [],
+        content_type: "",
+        created_at:new Date(),
+        link:""
+    });
+    const redirect = useRedirect()
+    const [edit,setEdit] = useState<number | null>(null)
+    const [newContent, setNewContent] = useState<Content>({
+        data: "text",
+        value: "",
     });
 
-    const [newContent, setNewContent] = useState<Content>({ data: "text", value: "" });
-    const [editIndex, setEditIndex] = useState<number | null>(null);
+    const contentRef = useRef<HTMLInputElement>(null);
+    const thumbnailRef = useRef<HTMLInputElement>(null);
 
-    const redirect = useRedirect();
-
-    const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    const handleContentChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
         setNewContent({ ...newContent, value: e.target.value });
     };
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            setNewContent({ ...newContent, value: e.target.files[0] });
+    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setNewContent({ ...newContent, value: file });
+        }
+    };
+
+    const handleThumbnailChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setArticle({ ...article, thumbnail: file });
         }
     };
 
     const saveContent = () => {
-        if (editIndex !== null) {
-            const updatedContent = [...article.content];
-            updatedContent[editIndex] = newContent;
-            setArticle({ ...article, content: updatedContent });
-            setEditIndex(null);
-        } else {
-            setArticle({
-                ...article,
-                content: [...article.content, newContent],
-            });
+        if(edit) {
+            const update = article.content.map((value,idx)=>{
+                if(idx === edit) {
+                    return newContent;
+                } else value;
+            })
+            setArticle((prev) => ({
+                ...prev,
+                content: update as Article["content"],
+            }));
         }
+        setArticle((prev) => ({
+            ...prev,
+            content: [...prev.content, newContent],
+        }));
         setNewContent({ data: "text", value: "" });
     };
 
     const removeContent = (index: number) => {
-        const updatedContent = article.content.filter((_, i) => i !== index);
-        setArticle({ ...article, content: updatedContent });
+        setArticle((prev) => ({
+            ...prev,
+            content: prev.content.filter((_, i) => i !== index),
+        }));
     };
 
     const editContent = (index: number) => {
-        setNewContent(article.content[index]);
-        setEditIndex(index);
+        const content = article.content[index];
+        setNewContent(content);
+        removeContent(index);
+        setEdit(index)
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -65,38 +85,51 @@ function useArticleForm() {
             const id = toast.loading("Uploading please wait", {
                 dismissible: true,
             });
-
             const resolvedContent = await Promise.all(
                 article.content.map(async (content) => {
-                    if (content.data === "image" || content.data === "video") {
-                        if (typeof content.value !== "string") {
-                            const url = await uploadFile(content.value as File);
-                            return { ...content, value: url || "" };
-                        }
+                    if (content.data === "image" && typeof content.value !== "string"  || content.data === "video" && typeof content.value !== "string") {
+                        const url = await uploadFile(content.value as File);
+                        return { ...content, value: url || "" };
                     }
                     return content;
                 })
             );
 
-            const data = {
+            let thumbnailUrl = "";
+            if (typeof article.thumbnail !== "string") {
+                thumbnailUrl = await uploadFile(article.thumbnail as File) as string;
+            } else {
+                thumbnailUrl = article.thumbnail
+            }
+    
+            const data:Article = {
                 title: article.title,
                 published: article.published,
+                description: article.description,
+                thumbnail: thumbnailUrl,
                 content: resolvedContent,
-                id: article.id,
+                content_type:article.content_type,
+                id:article.id,
+                created_at:article.created_at,
+                link:article.link,
             };
-
+    
+            console.log(data);
+            // await complete(data)
             const response = await axiosInstance.post("/articles/edit", data);
-
+            console.log(response)
             if (response.status === 200) {
-                toast.success("Uploaded Successfully", {
+                toast.success("Article updated successfully",{
                     id,
+                    // onAutoClose:()=>redirect({path:response.data.link})
                 });
-                return redirect({ path: "/articles" });
             } else {
-                console.error("Failed to submit the article.");
+                toast.error("Failed to update article",{
+                    id
+                });
             }
         } catch (error) {
-            console.error("An error occurred while submitting the article.", error);
+            toast.error("An error occurred while updating the article");
         }
     };
 
@@ -111,8 +144,10 @@ function useArticleForm() {
         handleSubmit,
         setArticle,
         setNewContent,
-        editIndex
+        handleThumbnailChange,
+        contentRef,
+        thumbnailRef
     };
-}
+};
 
 export default useArticleForm;

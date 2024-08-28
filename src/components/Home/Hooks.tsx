@@ -4,7 +4,6 @@ import { getMyArticles } from "@/request/articles";
 import { useEffect, useState } from "react";
 
 export default function useHome() {
-    const [state, setState] = useState<Article | null>(null);
     const [articles, setArticles] = useState<Article[]>([])
     const [skip, setSkip] = useState(0)
     const [count, setCount] = useState(0)
@@ -20,7 +19,7 @@ export default function useHome() {
     useEffect(() => {
         getArticles()
     }, [])
-    return { state, setState, articles, count }
+    return { articles, count }
 }
 
 export function useArticler(article: Article) {
@@ -29,4 +28,21 @@ export function useArticler(article: Article) {
         setArticle(article)
     },[article])
     return { articler }
+}
+
+export function useMapArticle(article:Article[]) {
+    const [state, setState] = useState<Article | null>(null);
+    const [arts,setArts] = useState<Article[]>([])
+    async function editComplete(newData:Article) {
+        const update = arts.map((alue,udx)=>{
+            if(newData.id === state?.id) {
+                return newData;
+            } else return alue;
+        })
+        setArts(update)
+    }
+    useEffect(()=>{
+        setArts(article)
+    },[])
+    return {state,setState,arts,editComplete}
 }

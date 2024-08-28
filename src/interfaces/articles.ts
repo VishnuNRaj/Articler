@@ -24,7 +24,7 @@ export interface Add_Article {
 export interface Article extends Add_Article {
     id?:string;
     fk_author?:Users;
-    createdAt:Date;
+    created_at:Date;
     link:string;
 }
 
