@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Add_Article, Content } from "@/interfaces/articles";
 import useRedirect from "@/hooks/useRedirect";
 import useLoading from "@/hooks/useLoading";
@@ -11,8 +11,12 @@ function useArticleForm() {
         title: "",
         content: [],
         published: false,
+        description: "",
+        thumbnail: null,
+        content_type:""
     });
-
+    const contentRef = useRef<HTMLInputElement | null>(null)
+    const thumbnailRef = useRef<HTMLInputElement | null>(null)
     const [newContent, setNewContent] = useState<Content>({ data: "text", value: "" });
     const redirect = useRedirect();
 
@@ -26,6 +30,12 @@ function useArticleForm() {
         }
     };
 
+    const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            setArticle({ ...article, thumbnail: e.target.files[0] });
+        }
+    };
+
     const addContent = () => {
         setArticle({
             ...article,
@@ -36,6 +46,12 @@ function useArticleForm() {
 
     const removeContent = (index: number) => {
         const updatedContent = article.content.filter((_, i) => i !== index);
+        setArticle({ ...article, content: updatedContent });
+    };
+
+    const updateContent = (index: number, content: Content) => {
+        const updatedContent = [...article.content];
+        updatedContent[index] = content;
         setArticle({ ...article, content: updatedContent });
     };
 
@@ -55,11 +71,19 @@ function useArticleForm() {
                     return content;
                 })
             );
+
+            let thumbnailUrl = "";
+            if (article.thumbnail) {
+                thumbnailUrl = await uploadFile(article.thumbnail as File) as string;
+            }
     
             const data = {
                 title: article.title,
                 published: article.published,
+                description: article.description,
+                thumbnail: thumbnailUrl,
                 content: resolvedContent,
+                content_type:article.content_type
             };
     
             console.log(data);
@@ -78,18 +102,21 @@ function useArticleForm() {
             console.error("An error occurred while submitting the article.", error);
         }
     };
-    
 
     return {
         article,
         newContent,
         handleContentChange,
         handleFileChange,
+        handleThumbnailChange,
         addContent,
         removeContent,
+        updateContent, 
         handleSubmit,
         setArticle,
         setNewContent,
+        thumbnailRef,
+        contentRef
     };
 }
 

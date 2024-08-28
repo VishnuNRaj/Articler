@@ -1,16 +1,16 @@
 "use client";
 import { Article } from "@/interfaces/articles";
-import { getMyArticles } from "@/request/articles";
+import { getArticleDatas } from "@/request/articles";
 import { useEffect, useState } from "react";
 
-export default function useHome() {
-    const [state, setState] = useState<Article | null>(null);
+export default function useArticles() {
     const [articles, setArticles] = useState<Article[]>([])
     const [skip, setSkip] = useState(0)
     const [count, setCount] = useState(0)
-    async function getArticles() {
+    async function getArticleData() {
         try {
-            const response = await getMyArticles({ skip, search: "" })
+            const response = await getArticleDatas({ skip, search: "" })
+            console.log(response)
             setArticles(response.articles)
             setCount(response.count)
         } catch (e) {
@@ -18,9 +18,9 @@ export default function useHome() {
         }
     }
     useEffect(() => {
-        getArticles()
+        getArticleData()
     }, [])
-    return { state, setState, articles, count }
+    return { articles, count }
 }
 
 export function useArticler(article: Article) {

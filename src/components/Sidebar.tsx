@@ -103,10 +103,8 @@ export function SidebarDemo({ children }: SidebarDemoProps) {
                             href: "/profile",
                             onclick: () => redirect({ path: "/profile" }),
                             icon: (
-                                <Image
-                                    src={config?.user && config.user.image ? `${config.user.image}` : "/user.png"} className="h-7 w-7 flex-shrink-0 rounded-full"
-                                    width={50}
-                                    height={50}
+                                <img
+                                    src={config?.user && config.user.image ? `${config.user.image}` : "/user.png"} className="h-7 w-7 flex-shrink-0 object-cover rounded-full"
                                     style={{borderRadius:"99999px"}}
                                     alt="Avatar"
                                 />

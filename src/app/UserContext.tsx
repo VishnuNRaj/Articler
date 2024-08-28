@@ -1,29 +1,44 @@
-"use client"
-import useRedirect from '@/hooks/useRedirect';
-import { getServerSession, User } from 'next-auth';
-import { getSession } from 'next-auth/react';
-import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
-
+"use client";
+import { getSession } from "next-auth/react";
+import React, { createContext, useState, useContext, ReactNode, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Session } from "next-auth";
 
 interface UserContextType {
-    user: User | null;
-    setUser: React.Dispatch<React.SetStateAction<User | null>>;
+    user: Session["user"] | null;
+    setUser: React.Dispatch<React.SetStateAction<Session["user"] | null>>;
 }
 
 export const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-    const [user, setUser] = useState<User | null>(null);
-    const redirect = useRedirect()
-    const getSessions = async () => {
-        const session = await getSession()
-        if (session?.user) {
-            return setUser(session.user)
-        } 
-    }
+    const [user, setUser] = useState<Session["user"] | null>(null);
+    const router = useRouter();
+
     useEffect(() => {
-        getSessions()
-    }, [getServerSession])
+        const getSessionAndUpdate = async () => {
+            const session = await getSession();
+            if (session?.user) {
+                setUser(session.user);
+            } else {
+                setUser(null);
+                router.push("/login");
+            }
+        };
+
+        getSessionAndUpdate();
+
+        const handleSessionChange = async () => {
+            const session = await getSession();
+            if (session?.user) {
+                setUser(session.user);
+            }
+        };
+
+        window.addEventListener("focus", handleSessionChange);
+        return () => window.removeEventListener("focus", handleSessionChange);
+    }, []);
+
     return (
         <UserContext.Provider value={{ user, setUser }}>
             {children}
@@ -34,7 +49,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 export const useUser = () => {
     const context = useContext(UserContext);
     if (!context) {
-        throw new Error('useUser must be used within a UserProvider');
+        throw new Error("useUser must be used within a UserProvider");
     }
     return { ...context };
 };

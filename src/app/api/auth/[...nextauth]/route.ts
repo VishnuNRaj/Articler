@@ -1,17 +1,19 @@
+// src/app/api/auth/[...nextauth]/route.ts
+
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import login from "@/app/next-auth/login";
+import { getUserData } from "@/utils/GetUser";
 import { NextAuthOptions } from "next-auth";
-import { string } from "yup";
 
-declare module 'next-auth' {
+declare module "next-auth" {
     interface Session {
         user: {
             id: string;
             email: string;
             name: string;
             image?: string;
-        }
+        };
     }
 
     interface User {
@@ -29,31 +31,36 @@ declare module 'next-auth' {
     }
 }
 
-
-const authOptions: NextAuthOptions = {
+export const authOptions: NextAuthOptions = {
     session: {
-        strategy: 'jwt',
+        strategy: "jwt",
     },
     providers: [
         CredentialsProvider({
             name: "Credentials",
             credentials: {
                 email: { label: "Email", type: "text" },
-                password: { label: "Password", type: "password" }
+                password: { label: "Password", type: "password" },
             },
             authorize: login,
         }),
     ],
     pages: {
-        signIn: '/login',
+        signIn: "/login",
     },
     callbacks: {
-        async jwt({ token, user }) {
-            if (user) {
-                token.id = user.id;
-                token.email = user.email;
-                token.name = user.name;
-                token.profile = user.profile;
+        async jwt({ token }):Promise<any> {
+            if (token.email) {
+                const userData = await getUserData(token.email as string);
+
+                if (!userData || userData?.status !== "active") {
+                    return null;
+                }
+
+                token.id = userData.id;
+                token.email = userData.email;
+                token.name = userData.name;
+                token.profile = userData.profile;
             }
             return token;
         },
@@ -69,11 +76,10 @@ const authOptions: NextAuthOptions = {
             return session;
         },
     },
-    debug: process.env.NODE_ENV === 'development',
+    debug: process.env.NODE_ENV === "development",
     secret: process.env.NEXTAUTH_SECRET,
 };
 
 const nextAuth = NextAuth(authOptions);
 
 export { nextAuth as GET, nextAuth as POST };
-

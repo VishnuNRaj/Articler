@@ -11,6 +11,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Articler",
   description: "Articles...",
+  icons:"/Desktop.png"
 };
 
 export default async function RootLayout({
