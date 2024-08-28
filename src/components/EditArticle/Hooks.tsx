@@ -13,6 +13,10 @@ function useArticleForm() {
         content: [],
         published: false,
         createdAt: new Date(),
+        content_type:"",
+        description:"",
+        link:"",
+        thumbnail:"",
     });
 
     const [newContent, setNewContent] = useState<Content>({ data: "text", value: "" });

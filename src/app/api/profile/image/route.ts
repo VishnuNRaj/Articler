@@ -3,7 +3,7 @@
 // src/app/api/profile/image/route.ts
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import authOptions from "@/config/authOptions";
 import sql from "@/database/Postgres";
 
 export async function PATCH(req: Request) {

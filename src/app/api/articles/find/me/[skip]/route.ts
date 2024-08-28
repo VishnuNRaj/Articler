@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import sql from '@/database/Postgres';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import authOptions from '@/config/authOptions';
 import { QueryResult } from 'pg';
 import Users from '@/interfaces/articles';
 
