@@ -1,8 +1,6 @@
 "use client";
 
 import useLoading from "@/hooks/useLoading";
-// import { Dialog } from "@material-tailwind/react";
-import EditArticleComponent from "../EditArticle/EditArticleComponent";
 import useHome from "./Hooks";
 import MyArticles from "./MyArticles";
 import Preloader from "@/styles/Preloader";
@@ -22,7 +20,9 @@ export default function HomeComponent() {
             <div className="w-full flex items-center justify-center flex-shrink-0">
                 My Articles
             </div>
-            <MyArticles articles={articles} />
+            {articles && articles.length > 0 && (
+                <MyArticles articles={articles} />
+            )}
         </div>
     )
 }
