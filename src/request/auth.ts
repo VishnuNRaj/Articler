@@ -3,7 +3,7 @@ import { RegisterInterface, RegitserResponse } from '@/interfaces/auth';
 import { AxiosResponse } from 'axios';
 import { getServerSession, Session } from 'next-auth';
 
-export async function registerUser(userData:RegisterInterface):Promise<AxiosResponse<RegitserResponse>> {
+export async function registerUser(userData:RegisterInterface):Promise<RegitserResponse> {
     try {
         const response = await axiosInstance.post('/auth/register', userData);
         console.log('Registration successful:', response.data);

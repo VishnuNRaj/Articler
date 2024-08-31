@@ -33,3 +33,14 @@ export async function getArticle(link:string):Promise<{article:Article}> {
         return error.response.data
     }
 }
+
+export async function deleteArticle(link:string):Promise<{message:string,status:number}> {
+    try {
+        const response = await axiosInstance.delete(`/articles/delete?link=${link}`);
+        console.log('Data: ', response.data);
+        return response.data
+    } catch (error:any) {
+        console.error('Registration error:', error);
+        return error.response.data
+    }
+}

@@ -52,7 +52,7 @@ export function SidebarDemo({ children }: SidebarDemoProps) {
                 <IconPlus className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
             ),
             onclick: () => redirect({ path: "/add-article" })
-        },
+        }, 
         {
             label: "Profile",
             href: "/profile",
@@ -61,14 +61,14 @@ export function SidebarDemo({ children }: SidebarDemoProps) {
             ),
             onclick: () => redirect({ path: "/profile" })
         },
-        {
-            label: "Settings",
-            href: "/settings",
-            icon: (
-                <IconSettings className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
-            ),
-            onclick: () => redirect({ path: "/settings" })
-        },
+        // {
+        //     label: "Settings",
+        //     href: "/settings",
+        //     icon: (
+        //         <IconSettings className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+        //     ),
+        //     onclick: () => redirect({ path: "/settings" })
+        // },
         {
             label: `${config && config.user ? "Logout" : "Login"}`,
             href: `${config && config.user ? "/login" : "/login"}`,

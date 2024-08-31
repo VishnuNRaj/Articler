@@ -1,7 +1,8 @@
 "use client";
 import { Article } from "@/interfaces/articles";
-import { getMyArticles } from "@/request/articles";
+import { deleteArticle, getMyArticles } from "@/request/articles";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function useHome() {
     const [articles, setArticles] = useState<Article[]>([])
@@ -41,8 +42,18 @@ export function useMapArticle(article:Article[]) {
         })
         setArts(update)
     }
+    async function deleteArt(link:string) {
+        toast.loading("Removing article please wait",{id:link})
+        const response = await deleteArticle(link)
+        if(response.status === 200) {
+            const updated = arts.filter((val)=>val.link !== link)
+            setArts(updated)
+            return toast.success(response.message,{id:link})
+        } else return toast.error(response.message,{id:link})
+
+    }
     useEffect(()=>{
         setArts(article)
     },[])
-    return {state,setState,arts,editComplete}
+    return {state,setState,arts,editComplete,deleteArt}
 }

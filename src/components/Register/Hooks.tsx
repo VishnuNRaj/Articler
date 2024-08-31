@@ -5,12 +5,18 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { RegisterInterface } from "@/interfaces/auth";
 import { registerUser } from "@/request/auth";
+import { toast } from "sonner";
 export default function useRegister() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const handleSubmit = async (values: RegisterInterface) => {
+        const id = toast.loading("Verifying please wait")
         const response = await registerUser({ ...values, auth_type: "credential" })
-        console.log(response)
+        if (response.status === 200) {
+            toast.success(response.message, {
+                id
+            })
+        } else toast.error(response.message, { id })
     }
     const formik = useFormik({
         initialValues: {
